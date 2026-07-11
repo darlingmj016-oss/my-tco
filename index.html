@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-black text-gray-100 selection:bg-[#ffb300]/30 selection:text-[#ffb300]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCO CLAN // TCO . FAMILY HUB</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        orbitron: ['"Big Shoulders Display"', 'sans-serif'],
+                        mono: ['"IBM Plex Mono"', 'monospace'],
+                    },
+                    colors: {
+                        cyber: {
+                            black: '#07090a',
+                            dark: '#0b0d0a',
+                            gray: '#151610',
+                            purple: '#ffb300',
+                            red: '#d1483b',
+                            blue: '#4f9d95',
+                            green: '#8fae4f'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 15px rgba(255, 179, 0, 0.35), 0 0 30px rgba(255, 179, 0, 0.15)',
+                        'neon-red': '0 0 15px rgba(209, 72, 59, 0.35)',
+                        'neon-green': '0 0 15px rgba(143, 174, 79, 0.35), 0 0 30px rgba(143, 174, 79, 0.12)',
+                        'neon-input': 'inset 0 0 10px rgba(255, 179, 0, 0.2), 0 0 15px rgba(255, 179, 0, 0.25)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(255,179,0,0.05), transparent 60%),
+                               url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .neon-text-purple {
+            text-shadow: 0 0 10px rgba(255,179,0,0.55), 0 0 20px rgba(255,179,0,0.3);
+        }
+        .neon-text-red {
+            text-shadow: 0 0 10px rgba(209,72,59,0.6), 0 0 20px rgba(209,72,59,0.3);
+        }
+
+        /* Signature element: HUD target-lock corner brackets on interactive panels */
+        .hud-corners { position: relative; }
+        .hud-corners::before,
+        .hud-corners::after,
+        .hud-corners .hc-tr,
+        .hud-corners .hc-bl {
+            content: "";
+            position: absolute;
+            width: 14px; height: 14px;
+            border-color: currentColor;
+            opacity: 0;
+            transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
+            pointer-events: none;
+        }
+        .hud-corners::before { top: 6px; left: 6px; border-top: 2px solid; border-left: 2px solid; }
+        .hud-corners::after { bottom: 6px; right: 6px; border-bottom: 2px solid; border-right: 2px solid; }
+        .hud-corners .hc-tr { top: 6px; right: 6px; border-top: 2px solid; border-right: 2px solid; }
+        .hud-corners .hc-bl { bottom: 6px; left: 6px; border-bottom: 2px solid; border-left: 2px solid; }
+        .hud-corners:hover::before,
+        .hud-corners:hover::after,
+        .hud-corners:hover .hc-tr,
+        .hud-corners:hover .hc-bl { opacity: 1; width: 20px; height: 20px; }
+
+        /* Blueprint grid used behind dark section backgrounds */
+        .tac-grid {
+            background-image: linear-gradient(rgba(255,179,0,0.05) 1px, transparent 1px),
+                               linear-gradient(90deg, rgba(255,179,0,0.05) 1px, transparent 1px);
+            background-size: 42px 42px;
+        }
+
+        :focus-visible {
+            outline: 2px solid #ffb300;
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        .killfeed-item {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 100px;
+        }
+        .killfeed-item.removing {
+            height: 0 !important;
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            opacity: 0 !important;
+            transform: translateX(-50px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020202;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ffb300;
+            border-radius: 3px;
+        }
+
+        .dock-scroll {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .dock-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        @keyframes radar-sweep {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .radar-sweep-css {
+            animation: radar-sweep 5s linear infinite;
+        }
+
+        @keyframes stream-scan {
+            from { background-position: 0 0; }
+            to { background-position: 0 40px; }
+        }
+        .stream-scanlines {
+            background-image: repeating-linear-gradient(0deg, rgba(255,179,0,0.05) 0px, rgba(255,179,0,0.05) 1px, transparent 1px, transparent 4px);
+            animation: stream-scan 3s linear infinite;
+        }
+        @keyframes live-ring {
+            0% { transform: scale(0.9); opacity: 0.9; }
+            70% { transform: scale(1.8); opacity: 0; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+        .live-ring {
+            animation: live-ring 1.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+        }
+    </style>
+</head>
+<body class="font-orbitron tracking-wide overflow-x-hidden text-gray-300">
+
+    <div id="main-content" class="min-h-screen flex flex-col relative bg-[#020202]">
+
+        <section id="home-view" class="relative w-full min-h-screen flex flex-col justify-between items-center z-10">
+            <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover pointer-events-auto z-0"></canvas>
+            
+            <header class="w-full max-w-7xl px-6 py-6 flex justify-between items-center z-20 mix-blend-screen">
+                <div class="flex flex-col">
+                    <h1 class="text-xl md:text-2xl font-black text-white tracking-tighter">TCO <span class="text-cyber-purple text-sm font-light font-mono block tracking-widest">CLAN // REGIME</span></h1>
+                </div>
+                <div class="text-right text-xs font-mono text-zinc-500">
+                    <div>COLLAB: <span class="text-white font-bold font-orbitron">TCO . Family</span></div>
+                    <div class="animate-pulse">ONLINE SYNC // SECURE</div>
+                </div>
+            </header>
+
+            <div class="w-full max-w-7xl px-6 flex flex-col justify-center items-start flex-grow z-20 select-none pointer-events-none mt-12 md:mt-0">
+                <div class="space-y-4 max-w-3xl pointer-events-auto">
+                    <div class="inline-block border border-cyber-purple/30 bg-cyber-purple/5 px-3 py-1 rounded text-[10px] text-cyber-purple font-mono uppercase tracking-widest">
+                        CODM Global Operation Squad
+                    </div>
+                    <h2 class="text-5xl md:text-8xl font-black text-white leading-none tracking-tight font-orbitron">
+                        THE CHOSEN <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#ffb300] via-white to-zinc-600 neon-text-purple">ONES</span>
+                    </h2>
+                </div>
+
+                <nav class="flex flex-col md:flex-row gap-6 md:gap-16 mt-12 w-full border-t border-zinc-800/60 pt-8 pointer-events-auto">
+                    <a href="https://t.me/REGALITY_TCO" target="_blank" rel="noopener noreferrer" class="nav-large-link group flex flex-col">
+                        <span class="text-xs font-mono text-zinc-500 group-hover:text-cyber-purple transition-colors">01 / TELEGRAM CHANNEL</span>
+                        <span class="text-2xl md:text-4xl font-black text-white tracking-wide transition-all group-hover:text-cyber-purple">@REGALITY_TCO</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="switchToMember()" class="nav-large-link group flex flex-col">
+                        <span class="text-xs font-mono text-zinc-500 group-hover:text-cyber-purple transition-colors">02 / CLAN LEADER</span>
+                        <span class="text-2xl md:text-4xl font-black text-white tracking-wide transition-all group-hover:text-cyber-purple">K1CU2</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="switchToMember()" class="nav-large-link group flex flex-col">
+                        <span class="text-xs font-mono text-zinc-500 group-hover:text-cyber-red transition-colors">03 / CLAN OPERATIVES</span>
+                        <span id="hero-member-count" class="text-2xl md:text-4xl font-black text-white tracking-wide transition-all group-hover:text-cyber-red">—</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="w-full max-w-7xl px-6 py-8 border-t border-zinc-900 z-20 grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px] font-mono text-zinc-500 mix-blend-screen bg-black/40 backdrop-blur-sm rounded-t-xl">
+                <div>
+                    <span class="block text-zinc-600">GAME MODES</span>
+                    <span class="text-white">MULTIPLAYER & BATTLE ROYALE PLAYERS</span>
+                </div>
+                <div>
+                    <span class="block text-zinc-600">RECRUITMENT STATUS</span>
+                    <span class="text-cyber-purple font-bold">CLOSED</span>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="w-full bg-cyber-black tac-grid py-20 px-6 border-t border-zinc-900 relative">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="hud-corners text-cyber-purple lg:col-span-5 flex flex-col items-center justify-center relative bg-cyber-gray/40 border border-zinc-800 p-8 rounded-2xl shadow-xl overflow-hidden group">
+                    <span class="hc-tr"></span><span class="hc-bl"></span>
+                    <div class="absolute top-2 left-4 text-[10px] font-mono text-zinc-600">SYS_MODULE: RADAR_SCANNER</div>
+                    
+                    <div class="w-72 h-72 md:w-80 md:h-80 rounded-full border border-cyber-purple/30 relative flex items-center justify-center overflow-hidden bg-black/60 shadow-neon-purple/5">
+                        
+                        <div class="absolute inset-0 origin-center rounded-full radar-sweep-css" 
+                             style="background: conic-gradient(from 0deg, rgba(255, 179, 0, 0.15) 0deg, rgba(255, 179, 0, 0) 90deg);">
+                        </div>
+
+                        <div class="absolute w-3/4 h-3/4 border border-dashed border-cyber-purple/20 rounded-full"></div>
+                        <div class="absolute w-1/2 h-1/2 border border-zinc-800 rounded-full"></div>
+                        <div class="absolute w-1/4 h-1/4 border border-zinc-900 rounded-full"></div>
+                        
+                        <div class="absolute top-0 bottom-0 left-1/2 w-[1px] bg-zinc-800/60"></div>
+                        <div class="absolute left-0 right-0 top-1/2 h-[1px] bg-zinc-800/60"></div>
+
+                        <div class="absolute w-2 h-2 rounded-full bg-cyber-red top-1/4 left-1/3 animate-ping"></div>
+                        <div class="absolute w-1.5 h-1.5 rounded-full bg-cyber-purple top-1/2 right-1/4 animate-pulse"></div>
+                        <div class="absolute w-2 h-2 rounded-full bg-cyber-blue bottom-1/3 left-1/2 animate-pulse"></div>
+                    </div>
+
+                    <div class="w-full mt-6 grid grid-cols-3 gap-2 text-center text-[10px] font-mono text-zinc-500">
+                        <div class="bg-black/40 p-2 border border-zinc-900 rounded">
+                            <span class="block text-zinc-600">RANGE</span>
+                            <span class="text-white text-xs">842 KM/S</span>
+                        </div>
+                        <div class="bg-black/40 p-2 border border-zinc-900 rounded">
+                            <span class="block text-zinc-600">TARGETS</span>
+                            <span class="text-cyber-red text-xs font-bold">03 DETECT</span>
+                        </div>
+                        <div class="bg-black/40 p-2 border border-zinc-900 rounded">
+                            <span class="block text-zinc-600">SWEEP FLUX</span>
+                            <span class="text-cyber-purple text-xs">99.82%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="killfeed-anchor" class="hud-corners text-cyber-red lg:col-span-7 flex flex-col h-[420px] bg-cyber-dark border border-zinc-900 rounded-2xl p-6 relative overflow-hidden shadow-2xl">
+                    <span class="hc-tr"></span><span class="hc-bl"></span>
+                    <div class="flex items-center justify-between border-b border-zinc-800 pb-3 mb-4">
+                        <div class="flex items-center gap-2 text-xs font-mono tracking-widest text-zinc-400">
+                            <span class="w-2 h-2 rounded-full bg-cyber-red animate-pulse"></span>
+                            LIVE ACTION IN-GAME FEED
+                        </div>
+                        <span class="text-[10px] font-mono text-zinc-600">SERVER STATUS: BROADCASTING</span>
+                    </div>
+
+                    <div id="killfeed-container" class="flex flex-col justify-end flex-grow overflow-hidden space-y-3 font-mono text-sm">
+                        </div>
+                </div>
+
+            </div>
+        </section>
+
+
+    </div>
+
+
+    <div id="gun-view" class="hidden min-h-screen bg-cyber-dark tac-grid py-12 px-6 relative z-10 opacity-0 overflow-hidden">
+        <div class="stream-scanlines absolute inset-0 pointer-events-none z-0"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+
+            <div class="relative w-full rounded-2xl overflow-hidden border border-cyber-red/30 bg-black/90 p-8 md:p-12 mb-12 flex flex-col justify-between shadow-2xl">
+                <div class="absolute inset-0 bg-gradient-to-br from-cyber-red/10 via-transparent to-transparent z-0"></div>
+
+                <div class="relative z-10 flex justify-between items-center border-b border-zinc-800/60 pb-4">
+                    <div class="flex items-center gap-2 font-mono text-[10px] text-cyber-red tracking-widest font-bold">
+                        <span class="w-2 h-2 bg-cyber-red rounded-full animate-ping"></span>
+                        SYSTEM PROTOCOL // COMBAT SMG HARDWARE METAS
+                    </div>
+                    <div class="flex items-center gap-3 md:gap-4 font-mono text-[10px] text-zinc-400">
+                        <span class="flex items-center gap-1">LOADOUTS // <span id="gun-total-count" class="text-white font-bold">0</span></span>
+                        <span class="text-zinc-600">|</span>
+                        <span class="flex items-center gap-1 text-cyber-red font-bold animate-pulse">● ACTIVE META</span>
+                    </div>
+                </div>
+
+                <div class="relative z-10 mt-6">
+                    <span class="text-xs font-mono text-cyber-red tracking-widest block uppercase mb-2">// TCO . Family GUNSMITH DATABASE</span>
+                    <h3 class="text-4xl md:text-6xl font-black text-white tracking-tight uppercase leading-none">TCO SYSTEM<br class="md:hidden"> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-red via-white to-cyber-red">SIGNATURE WEAPONS</span></h3>
+                    <p class="text-xs font-mono text-zinc-400 max-w-lg leading-relaxed mt-4">
+                        Full gunsmith attachment breakdowns for the clan's signature weapon metas. Edit the TCO_GUN_CATALOG array to add or update loadouts.
+                    </p>
+                </div>
+            </div>
+
+            <div id="gun-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-16">
+                </div>
+
+        </div>
+    </div>
+
+
+    <div id="member-view" class="hidden min-h-screen bg-cyber-dark tac-grid py-12 px-6 relative z-10 opacity-0">
+        <div class="max-w-7xl mx-auto">
+
+            <div class="relative w-full rounded-2xl overflow-hidden border border-zinc-800/80 bg-black/90 p-8 md:p-12 mb-12 flex flex-col justify-between shadow-2xl">
+                <div class="relative z-10 flex justify-between items-center border-b border-zinc-800/60 pb-4">
+                    <div class="flex items-center gap-2 font-mono text-[10px] text-cyber-purple tracking-widest font-bold">
+                        <span class="w-2 h-2 bg-cyber-purple rounded-full animate-ping"></span>
+                        SYSTEM PROTOCOL // BATTLE ORDER MATRIX
+                    </div>
+                    <div class="flex items-center gap-3 md:gap-4 font-mono text-[10px] text-zinc-400">
+                        <span class="flex items-center gap-1">TOTAL // <span id="member-total-count" class="text-white font-bold">0</span></span>
+                    </div>
+                </div>
+
+                <div class="relative z-10 mt-6">
+                    <h3 class="text-3xl md:text-5xl font-black text-white tracking-tight uppercase">CLAN ROSTER DETAILED MANIFEST</h3>
+                    <div class="w-24 h-[2px] bg-cyber-purple mt-4"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 pb-16">
+                <div class="flex flex-col space-y-5">
+                    <div class="flex items-center justify-between border-b border-zinc-900 pb-3">
+                        <h4 class="text-sm font-mono uppercase tracking-widest text-cyber-purple">// گوشی (Mobile)</h4>
+                        <span id="roster-count-phone" class="text-xs font-mono text-zinc-600"></span>
+                    </div>
+                    <div id="roster-grid-phone" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                        </div>
+                </div>
+
+                <div class="flex flex-col space-y-5">
+                    <div class="flex items-center justify-between border-b border-zinc-900 pb-3">
+                        <h4 class="text-sm font-mono uppercase tracking-widest text-cyber-blue">// پی‌سی (PC)</h4>
+                        <span id="roster-count-pc" class="text-xs font-mono text-zinc-600"></span>
+                    </div>
+                    <div id="roster-grid-pc" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                        </div>
+                </div>
+
+                <div class="flex flex-col space-y-5">
+                    <div class="flex items-center justify-between border-b border-zinc-900 pb-3">
+                        <h4 class="text-sm font-mono uppercase tracking-widest text-cyber-red">// ایپد / پد (Tablet)</h4>
+                        <span id="roster-count-tablet" class="text-xs font-mono text-zinc-600"></span>
+                    </div>
+                    <div id="roster-grid-tablet" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="stream-view" class="hidden min-h-screen bg-cyber-dark tac-grid py-12 px-6 relative z-10 opacity-0 overflow-hidden">
+        <div class="stream-scanlines absolute inset-0 pointer-events-none z-0"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+
+            <div class="relative w-full rounded-2xl overflow-hidden border border-cyber-green/30 bg-black/90 p-8 md:p-12 mb-12 flex flex-col justify-between shadow-2xl">
+                <div class="absolute inset-0 bg-gradient-to-br from-cyber-green/10 via-transparent to-transparent z-0"></div>
+
+                <div class="relative z-10 flex justify-between items-center border-b border-zinc-800/60 pb-4">
+                    <div class="flex items-center gap-2 font-mono text-[10px] text-cyber-green tracking-widest font-bold">
+                        <span class="relative flex h-2 w-2">
+                            <span class="live-ring absolute inline-flex h-full w-full rounded-full bg-cyber-green"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyber-green"></span>
+                        </span>
+                        SYSTEM PROTOCOL // LIVE TRANSMISSION UPLINK
+                    </div>
+                    <div class="flex items-center gap-3 md:gap-4 font-mono text-[10px] text-zinc-400">
+                        <span class="flex items-center gap-1">CHANNELS // <span id="stream-total-count" class="text-white font-bold">0</span></span>
+                        <span class="text-zinc-600">|</span>
+                        <span class="flex items-center gap-1 text-cyber-green font-bold animate-pulse">● ON AIR</span>
+                    </div>
+                </div>
+
+                <div class="relative z-10 mt-6">
+                    <span class="text-xs font-mono text-cyber-green tracking-widest block uppercase mb-2">// TCO . Family BROADCAST NETWORK</span>
+                    <h3 class="text-4xl md:text-6xl font-black text-white tracking-tight uppercase leading-none">LIVE OPS<br class="md:hidden"> <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-green via-white to-cyber-green">STREAM HUB</span></h3>
+                    <p class="text-xs font-mono text-zinc-400 max-w-lg leading-relaxed mt-4">
+                        Direct uplinks to the clan's active broadcasters. Tap any signal card to jump straight into the live channel.
+                    </p>
+                </div>
+            </div>
+
+            <div id="stream-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-16">
+                </div>
+
+        </div>
+    </div>
+
+
+    <div id="dossier-modal" class="fixed inset-0 z-[11000] hidden bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="hud-corners text-cyber-purple bg-cyber-gray border border-cyber-purple/50 w-full max-w-2xl rounded-2xl overflow-hidden p-6 relative shadow-2xl transform scale-95 transition-transform duration-300">
+            <span class="hc-tr"></span><span class="hc-bl"></span>
+            <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-cyber-purple via-cyber-red to-cyber-blue"></div>
+            
+            <button id="modal-close" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors font-mono text-lg p-2">&times; CLOSE</button>
+            
+            <div id="dossier-content" class="space-y-6">
+                </div>
+        </div>
+    </div>
+
+
+    <div class="fixed bottom-[14px] sm:bottom-[30px] left-1/2 -translate-x-1/2 z-[9999] w-full sm:w-auto max-w-[94vw] sm:max-w-md px-2 sm:px-4">
+        <div class="dock-scroll bg-cyber-gray/60 border border-zinc-800 backdrop-blur-2xl rounded-full px-3 sm:px-6 py-2 sm:py-3 flex items-center justify-start sm:justify-center gap-2.5 sm:gap-8 shadow-2xl transition-all duration-300 hover:border-cyber-purple/40 overflow-x-auto">
+            
+            <button onclick="switchToHome()" id="dock-home-btn" class="flex items-center gap-1.5 sm:gap-2 font-orbitron text-[10px] sm:text-xs font-black tracking-widest text-cyber-purple transition-colors relative duration-300 shrink-0 whitespace-nowrap py-1">
+                HOME
+                <span class="absolute -bottom-1 left-0 right-0 h-[2px] bg-cyber-purple rounded" id="dock-home-indicator"></span>
+            </button>
+
+            <div class="w-[1px] h-4 bg-zinc-800 shrink-0"></div>
+
+            <button onclick="switchToMember()" id="dock-member-btn" class="flex items-center gap-1.5 sm:gap-2 font-orbitron text-[10px] sm:text-xs font-black tracking-widest text-zinc-500 hover:text-white transition-colors relative duration-300 shrink-0 whitespace-nowrap py-1">
+                MEMBERS
+                <span class="absolute -bottom-1 left-0 right-0 h-[2px] bg-cyber-blue rounded hidden" id="dock-member-indicator"></span>
+            </button>
+            
+            <div class="w-[1px] h-4 bg-zinc-800 shrink-0"></div>
+            
+            <button onclick="switchToGun()" id="dock-gun-btn" class="flex items-center gap-1.5 sm:gap-2 font-orbitron text-[10px] sm:text-xs font-black tracking-widest text-zinc-500 hover:text-white transition-colors relative duration-300 shrink-0 whitespace-nowrap py-1">
+                GUN
+                <span class="absolute -bottom-1 left-0 right-0 h-[2px] bg-cyber-red rounded hidden" id="dock-gun-indicator"></span>
+            </button>
+
+            <div class="w-[1px] h-4 bg-zinc-800 shrink-0"></div>
+
+            <button onclick="switchToStream()" id="dock-stream-btn" class="flex items-center gap-1.5 sm:gap-2 font-orbitron text-[10px] sm:text-xs font-black tracking-widest text-zinc-500 hover:text-white transition-colors relative duration-300 shrink-0 whitespace-nowrap py-1">
+                STREAM
+                <span class="absolute -bottom-1 left-0 right-0 h-[2px] bg-cyber-green rounded hidden" id="dock-stream-indicator"></span>
+            </button>
+
+        </div>
+    </div>
+
+
+
+    <script>
+        window.gsap = window.gsap || {
+            to: function(target, vars) {
+                const elements = typeof target === 'string' ? document.querySelectorAll(target) : (target.length ? target : [target]);
+                elements.forEach(el => {
+                    if (!el) return;
+                    if (vars.opacity !== undefined) el.style.opacity = vars.opacity;
+                    if (vars.y !== undefined) el.style.transform = `translateY(${vars.y}px)`;
+                    if (vars.x !== undefined) el.style.transform = `translateX(${vars.x}px)`;
+                    if (vars.scale !== undefined) el.style.transform = `scale(${vars.scale})`;
+                    if (vars.textShadow !== undefined) el.style.textShadow = vars.textShadow;
+                    if (vars.onComplete) setTimeout(vars.onComplete, (vars.duration || 0) * 1000);
+                });
+                return { kill: () => {} };
+            },
+            fromTo: function(target, fromVars, toVars) {
+                const elements = typeof target === 'string' ? document.querySelectorAll(target) : (target.length ? target : [target]);
+                elements.forEach(el => {
+                    if (!el) return;
+                    if (toVars.opacity !== undefined) el.style.opacity = toVars.opacity;
+                    if (toVars.y !== undefined) el.style.transform = `translateY(${toVars.y}px)`;
+                    if (toVars.onComplete) setTimeout(toVars.onComplete, (toVars.duration || 0) * 1000);
+                });
+                return { kill: () => {} };
+            }
+        };
+
+        // ================================================================
+        // ⚙️  TCO SITE CONFIG — همه‌ی محتوای قابل‌ویرایش سایت اینجاست
+        // Everything below this banner is content data. Edit these arrays
+        // to update the site — you never need to touch the code beneath
+        // the "RENDER ENGINE" marker further down.
+        // ================================================================
+
+        // ---- 1) CLAN ROSTER ---------------------------------------------
+        // Full member list. Shows up in the MEMBERS tab and feeds the
+        // live killfeed pool indirectly (via device grouping).
+        // Fields: name, uid (in-game ID), device, telegram (handle or "NO ID")
+        const TCO_ROSTER_DATABASE = [
+            { name: "TCO K1CU2", uid: "6884099539914653697", device: "PC", telegram: "@K1CU2pv" },
+            { name: "TCO NOOB?:)", uid: "6999098325006548993", device: "PC", telegram: "@CODMN00B" },
+            { name: "TCO DYING", uid: "7113288052965310465", device: "PC", telegram: "@COD_DYING" },
+            { name: "TCO ASHOB", uid: "7547580446379278337", device: "PC", telegram: "@CODASHOB" },
+            { name: "TCO AƝiMEヅ", uid: "7335856825266274306", device: "PC", telegram: "@ImRealANIME" },
+            { name: "TCO MaGic", uid: "7465052796788604929", device: "PC", telegram: "@Sinna8283" },
+            { name: "TCO Saladabi", uid: "7267254124832292865", device: "PC", telegram: "@PaRse_F" },
+            { name: "iSKy", uid: "6807482001814716417", device: "PC", telegram: "@Hamid_iSKy" },
+            { name: "TheZ13_Stream", uid: "7323292267825790977", device: "PC", telegram: "@PouyaZ13" },
+            { name: "TCO LіИԀѦ", uid: "7111407110843990017", device: "PC", telegram: "@eli145321" },
+            { name: "TCO N.D.Z.I", uid: "6797762747884568577", device: "PC", telegram: "@NDZI_NAVID" },
+            { name: "TCO Hanyuora", uid: "6860145816217780225", device: "PC", telegram: "NO ID" },
+            { name: "TCO Lightbulb", uid: "6805575641070239745", device: "PC", telegram: "@AmirNikatorr" },
+            { name: "TCO GRIMVEX?", uid: "7109439023852486657", device: "PC", telegram: "@GRIM_VEX" },
+            { name: "Ali.Atras", uid: "7465789203123470337", device: "PC", telegram: "@Alireza_atras" },
+            { name: "TCO اميرديزل", uid: "6946196980809531393", device: "PC", telegram: "@amir_dzel" },
+            { name: "TCO Memento", uid: "6742727420967190529", device: "PC", telegram: "@Farzadvzn" },
+            { name: "TCO BEHRAD", uid: "6922177007426469889", device: "PC", telegram: "@Behrad_MMA" },
+            { name: "TCO Matrix", uid: "7391253860386013185", device: "PC", telegram: "@mohamadkhch" },
+            { name: "GɌ文KhodeiRoN", uid: "6928249549094322177", device: "PC", telegram: "@MeHTi_o9" },
+            { name: "Koshৎ", uid: "6859009462158950401", device: "Controller (IPad Pro 2022)", telegram: "@PV_FoXeR" },
+            { name: "TCO Clyza", uid: "7376708532329971713", device: "Controller (IPad Pro 2024)", telegram: "@Yousahand" },
+            { name: "TCO AM", uid: "7128313310063624193", device: "Controller (IPad Pro 2024)", telegram: "@alcoholiscool" },
+            { name: "TCO INONIX", uid: "7108998794620436481", device: "Controller (POCO X6 PRO)", telegram: "@ALI_INONIX" },
+            { name: "TCO SiVlE", uid: "7330972683282087937", device: "Controller (POCO X3)", telegram: "@Aru0iii" },
+            { name: "BetOnDaddy", uid: "7400369194334355458", device: "Controller", telegram: "NO ID" },
+            { name: "TCO Syrex", uid: "7169643216219340801", device: "IPad Pro M4", telegram: "@younggebi" },
+            { name: "TCO Hadis", uid: "7188080850033377281", device: "IPad Pro 2024", telegram: "@codmata" },
+            { name: "TCO Demon", uid: "7040097781025538049", device: "IPad Pro 2024", telegram: "@Parham_z_a_90" },
+            { name: "TCO GodPain", uid: "7134283541516845057", device: "IPad Pro 2024", telegram: "@mahdivisca" },
+            { name: "TCO realalrez", uid: "6868584619584192513", device: "IPad Pro 2024", telegram: "@papar_mh" },
+            { name: "TCO RESTART ", uid: "6757408781711966209", device: "IPad 2024", telegram: "@Arshia121417" },
+            { name: "TCO spєєd", uid: "7139528431695822849", device: "IPad mini 2024", telegram: "@Codm_speed" },
+            { name: "TCO Storm", uid: "7395679180459540481", device: "Tab A9", telegram: "@Noyan_5" },
+            { name: "TCO KiAN", uid: "7452242777789628417", device: "Tab A8", telegram: "@KIAN1721" },
+            { name: "SmmyWatson", uid: "6743288829580935169", device: "IPad Pro 2024", telegram: "@Okmybro1" },
+            { name: "AmirAshGod", uid: "7080624491084840961", device: "IPad Pro 2025 ", telegram: "@DailithCore" },
+            { name: "TCO NiGhT", uid: "7237481696495861761", device: "IPad Pro 2020", telegram: "@A_NiGhT7" },
+            { name: "Gorbeh Siah", uid: "6986310144657915905", device: "IPad Pro 2024", telegram: "@plluiex" },
+            { name: "TCO Dragon", uid: "6958690487293706241", device: "A31", telegram: "@Arian_4040" },
+            { name: "TCO CHestnuT", uid: "7135397832865349633", device: "14T PRO", telegram: "@Amin_lbre" },
+            { name: "TCO JustNiGHT", uid: "7351473490687361025", device: "MIUI 10 PRO", telegram: "@Just_NiGHTOnCODM" },
+            { name: "TCO BanKai", uid: "7296527788563955713", device: "POCO M6 PRO", telegram: "@AizenTaichu" },
+            { name: "TCO NaWaB", uid: "6971118704319463425", device: "POCO X7 PRO", telegram: "@NaWaB1386" },
+            { name: "TCO Unrest", uid: "7363677711696330753", device: "POCO X7 PRO", telegram: "@Onlydrgsme" },
+            { name: "TCO MEHDI", uid: "6975818390125084673", device: "A21", telegram: "@MM_E_H_D_i" },
+            { name: "TCO DEMISE", uid: "6756932546409791489", device: "POCO X6 PRO", telegram: "@NEXORNott" },
+            { name: "TCO SEIKO", uid: "7034120931312599041", device: "POCO X5 PRO", telegram: "@mOhAmMaD_Y19" },
+            { name: "TCO IGRIS", uid: "7492705281258749953", device: "POCO X6 PRO", telegram: "@IGRIS765" },
+            { name: "TCO¹Fix¹one", uid: "7539135254029336577", device: "13T", telegram: "@world_do_1" },
+            { name: "Ʀx_ƠWƝEƦƦ", uid: "6872357657656360961", device: "Redmi NOTE 13", telegram: "@Araghchimem" },
+            { name: "TCO ARSi", uid: "7295805276901277697", device: "Redmi NOTE 13 PRO", telegram: "@arsiz1" },
+            { name: "TCO RAMONA", uid: "7100789677649035265", device: "IPhone 12 Promax", telegram: "@im_ashix1" },
+            { name: "TCO Dyrroth", uid: "7544383878431965186", device: "NOTHING PHONE 2A", telegram: "@EFI_20082" },
+            { name: "TCO AmoPetros", uid: "7017334829209878529", device: "S23", telegram: "@OG_oldgrandpa" },
+            { name: "TCO RezaV1n", uid: "7645628332260392961", device: "NOTE 11 PRO +", telegram: "@Reza_V1No" },
+            { name: "TCO AquaOne", uid: "6912283679478251521", device: "IPhone 14 Promax", telegram: "@Ontasuntezz" },
+            { name: "TCO oxro", uid: "7126417566310268929", device: "POCO X7 PRO", telegram: "NO ID" },
+            { name: "TCO 1395", uid: "6904233290606510081", device: "XIAOMI 13T PRO", telegram: "@Ehsan_YL" },
+            { name: "@Teryakmn", uid: "7397803788106399746", device: "POCO X6 PRO", telegram: "@Teryakmn" },
+            { name: "TCO BruTal", uid: "6939979625359998977", device: "POCO X7 PRO", telegram: "@Abmx1221" },
+            { name: "TCO LƛƊƳ", uid: "7335832211060359169", device: "IPhone 11", telegram: "@Theucary" },
+            { name: "TCO VoX", uid: "7447591039858049025", device: "POCO X7 PRO", telegram: "@Vox1R" },
+            { name: "TCO SULTAN", uid: "6872814320607494145", device: "POCO X7 PRO", telegram: "@V2REYMELI" },
+            { name: "TCO HiVA", uid: "7022764823033872385", device: "Redmi 10C", telegram: "NO ID" },
+            { name: "TCO jojo", uid: "7381055824692445185", device: "POCO X6 PRO", telegram: "NO ID" },
+            { name: "TCO Sorena", uid: "7298343524928258049", device: "M11", telegram: "@OgSajjad" },
+            { name: "TCO Drvish", uid: "6972112208101113857", device: "IPhone XS", telegram: "@Tkar1nit" },
+            { name: "TCO Baxo", uid: "7046023084570509313", device: "A53", telegram: "NO ID" },
+            { name: "TCO ONYX", uid: "7263172094648320001", device: "S25", telegram: "@iLosinMyPast" },
+            { name: "TCO ONTOP", uid: "7396994499682959361", device: "A21 S", telegram: "@ONTOP_CODYT" },
+            { name: "TCO 7L4", uid: "7246086788229038081", device: "POCO X7 PRO", telegram: "@Gikgikoof" },
+            { name: "TCO Ashborn", uid: "7190031216090218499", device: "POCO X6", telegram: "@Ashborn_xd1" },
+            { name: "Youwai?", uid: "6744639963881275393", device: "IPhone 14 Promax", telegram: "@itsqadim" }
+        ];
+
+        // Flavor text only — random weapon/opponent names shown in the
+        // homepage killfeed alongside a real streamer's name.
+        const WEAPONS_CATALOG = ["Switchblade X9", "QQ9", "VMP", "HS405", "MW11", "M4", "AK117", "Locus", "Kilo 141", "Holger 26"];
+        const OPPONENT_TARGETS = ["X_Slayer_X", "ShadowOp", "Vortex_TCO", "GhostWalker", "ApexPredator", "BulletStorm", "Cipher_CODM", "Alpha_Actual", "Titanium_Fist", "Rogue_Wave"];
+
+        // ---- 2) LIVE STREAM CHANNELS -------------------------------------
+        // Powers the STREAM tab cards. "template" picks the visual style:
+        // "terminal" | "holo" | "aparat" | "broadcast" | "signal"
+        const TCO_STREAM_LINKS = [
+            { name: "Stream Atras", handle: "@Stream_atras", url: "https://t.me/Stream_atras", platform: "Telegram", template: "terminal" },
+            { name: "TheZ13", handle: "@The_Z13", url: "https://t.me/The_Z13", platform: "Telegram", template: "holo" },
+            { name: "TheZ13 // Live", handle: "aparat.com/TheZ13/live", url: "https://www.aparat.com/TheZ13/live", platform: "Aparat", template: "aparat" },
+            { name: "GRIMVEX Time", handle: "@GRIMVEXtime", url: "https://t.me/GRIMVEXtime", platform: "Telegram", template: "broadcast" },
+            { name: "Game Reveiw", handle: "@game_reveiw", url: "https://t.me/game_reveiw", platform: "Telegram", template: "signal" },
+            { name: "Hanyuora", handle: "@Hanyuora", url: "https://t.me/Hanyuora", platform: "Telegram", template: "terminal" },
+            { name: "Dying CODM", handle: "@DYING_COD", url: "https://t.me/DYING_COD", platform: "Telegram", template: "holo" }
+        ];
+
+        // The homepage LIVE ACTION FEED only ever shows names pulled from
+        // TCO_STREAM_LINKS above — add/remove a streamer there and the
+        // killfeed on the homepage updates automatically. Nothing else
+        // to configure here.
+        const LIVE_FEED_OPERATIVES = [...new Set(TCO_STREAM_LINKS.map(s => s.name))];
+
+        // ---- 3) WEAPON LOADOUT CATALOG -----------------------------------
+        // Powers the LOADOUT (gun) tab. "accent" can be "purple", "red",
+        // or "blue". Each entry in "parts" renders one attachment row;
+        // set highlight:true to color that value with the card's accent
+        // color, or muted:true to dim it. Leave both off for plain white.
+        const TCO_GUN_CATALOG = [
+            {
+                accent: "purple",
+                badge: "META Tier S+",
+                configLabel: "WEAPON CONFIG: META 01",
+                name: "SWITCHBLADE X9",
+                parts: [
+                    { label: "BARREL", value: "MIP Light Extended Barrel" },
+                    { label: "STOCK", value: "YKM Light Stock" },
+                    { label: "LASER", value: "OWC Laser - Tactical", highlight: true },
+                    { label: "AMMUNITION", value: "Extended Mag A" },
+                    { label: "REAR GRIP", value: "Granulated Grip Tape", muted: true }
+                ],
+                evaluation: "Offers elite maneuverability, rapid ADS timelines, and extreme target control under highly dynamic close-combat professional match sets."
+            },
+            {
+                accent: "red",
+                badge: "AGGRESSIVE SLAYER",
+                configLabel: "WEAPON CONFIG: HIGH ACCURACY META",
+                name: "QQ9 // MP5 ARCHITECTURE",
+                parts: [
+                    { label: "BARREL", value: "Monolithic Integral Suppressor" },
+                    { label: "STOCK", value: "No Stock Component" },
+                    { label: "LASER", value: "OWC Laser - Tactical", highlight: true },
+                    { label: "AMMUNITION", value: "45 Round Extended Mag" },
+                    { label: "REAR GRIP", value: "Granulated Grip Tape" }
+                ],
+                evaluation: "Calibrated for perfect recoil control, highly minimized bullet spread dispersion, and outstanding mid-range engagements without losing crucial handling frame rates."
+            },
+            {
+                accent: "blue",
+                badge: "SEASON S5 METEOR",
+                configLabel: "WEAPON CONFIG: STEALTH HYBRID SMG",
+                name: "VMP SYSTEM",
+                parts: [
+                    { label: "BARREL", value: "Heavy Barrel (Stealth Provision)" },
+                    { label: "STOCK", value: "Bandit Adjustable Pad" },
+                    { label: "AMMUNITION", value: "Phoenix Fast Mag", highlight: true },
+                    { label: "PERK", value: "Rapid Fire Modification" },
+                    { label: "UNDERBARREL", value: "VX Pineapple Grip" }
+                ],
+                evaluation: "A massive stealth bullet fire rate configuration yielding a deadly TTK profile. Designed specifically for deep-line tactical flanking matches."
+            },
+            {
+                accent: "purple",
+                badge: "S+ TIER ALL-ROUNDER",
+                configLabel: "WEAPON CONFIG: ABSOLUTE META AR",
+                name: "BP50 SYSTEM",
+                parts: [
+                    { label: "MUZZLE", value: "Tactical Suppressor" },
+                    { label: "BARREL", value: "OWC Ranger" },
+                    { label: "STOCK", value: "No Stock", highlight: true },
+                    { label: "AMMUNITION", value: "60 Round Extended Mag" },
+                    { label: "REAR GRIP", value: "Granulated Grip Tape", muted: true }
+                ],
+                evaluation: "Unbelievable firing speed, flat vertical recoil control, and absolute supremacy in long-range multi-kills. Highly forgiving for mechanical mistakes."
+            },
+            {
+                accent: "red",
+                badge: "S-TIER BURST DAMAGE",
+                configLabel: "WEAPON CONFIG: HIGH CALIBER POWERHOUSE",
+                name: "HVK-30",
+                parts: [
+                    { label: "MUZZLE", value: "Tactical Suppressor" },
+                    { label: "BARREL", value: "RTC Light Extended Barrel" },
+                    { label: "STOCK", value: "No Stock Component" },
+                    { label: "AMMUNITION", value: "Large Caliber Ammo", highlight: true },
+                    { label: "REAR GRIP", value: "Granulated Grip Tape" }
+                ],
+                evaluation: "Offers massive headshot multipliers and rapid upper-body damage. Dominates 1v1 gunfights completely in tactical Search & Destroy circuits."
+            },
+            {
+                accent: "blue",
+                badge: "S-TIER 3-TAP AR",
+                configLabel: "WEAPON CONFIG: HEAVY SHREDDER CONFIG",
+                name: "DR-H",
+                parts: [
+                    { label: "MUZZLE", value: "Monolithic Suppressor" },
+                    { label: "BARREL", value: "OWC Ranger Barrel" },
+                    { label: "STOCK", value: "No Stock Component" },
+                    { label: "AMMUNITION", value: "25 Round OTM Mag", highlight: true },
+                    { label: "REAR GRIP", value: "Granulated Grip Tape" }
+                ],
+                evaluation: "Renowned for outstanding 3-tap upper body multipliers. Remains a S-tier staple with excellent mid-range damage and ADS speed profiles."
+            },
+            {
+                accent: "purple",
+                badge: "AGGRESSIVE SNIPER",
+                configLabel: "WEAPON CONFIG: ULTRA RAPID QUICKSCOPE",
+                name: "LW3-TUNDRA",
+                parts: [
+                    { label: "BARREL", value: "28.2\" Tiger Team Barrel" },
+                    { label: "STOCK", value: "Raider Stock Spec" },
+                    { label: "AMMUNITION", value: "7 Round Fast Loader", highlight: true },
+                    { label: "REAR GRIP", value: "Airborne Elastic Wrap" },
+                    { label: "UNDERBARREL", value: "Bruiser Foregrip" }
+                ],
+                evaluation: "Widely considered the single most dominant sniper in competitive leagues. Features unmatched scope-in rates and massive body multipliers."
+            },
+            {
+                accent: "red",
+                badge: "S-TIER SMG",
+                configLabel: "WEAPON CONFIG: RANGE HYBRID SMG",
+                name: "USS9",
+                parts: [
+                    { label: "MUZZLE", value: "Monolithic Suppressor" },
+                    { label: "STOCK", value: "YKM Light Stock" },
+                    { label: "LASER", value: "OWC Laser - Tactical", highlight: true },
+                    { label: "AMMUNITION", value: "45 Round Extended Mag" },
+                    { label: "REAR GRIP", value: "Granulated Grip Tape" }
+                ],
+                evaluation: "Offers highly consistent laser-like firing beams, elite mid-range TTK values, and supreme handling for highly aggressive entries."
+            },
+            {
+                accent: "blue",
+                badge: "2-TAP HEAVY METERS",
+                configLabel: "WEAPON CONFIG: DEVASTATING CALIBER AR",
+                name: "ODEN SYSTEM",
+                parts: [
+                    { label: "MUZZLE", value: "Colossus Suppressor" },
+                    { label: "BARREL", value: "OWC Marksman Barrel" },
+                    { label: "STOCK", value: "No Stock Component" },
+                    { label: "LASER", value: "OWC Laser - Tactical", highlight: true },
+                    { label: "AMMUNITION", value: "Large Extended Mag B" }
+                ],
+                evaluation: "Yields a devastating 2-tap head/chest time-to-kill limit. Optimal for locking down lanes, defensive angles, and heavily armored operatives."
+            }
+        ];
+
+
+        // ================================================================
+        // 🔧 RENDER ENGINE — از اینجا به پایین منطق سایته، معمولاً لازم
+        // نیست چیزی رو دستی تغییر بدی مگه بخوای رفتار سایت رو عوض کنی.
+        // (Engine code below. You shouldn't need to edit anything past
+        // this point just to update content — that's all handled above.)
+        // ================================================================
+
+        let webGlIntensity = 1.0;
+        let intensityDecayTimeout;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            buildInteractiveRoster();
+            startContinuousKillfeedEngine();
+            initializeWebGLHero();
+            setup3DNavigationAnimations();
+            setupModalInteractions();
+            const heroCount = document.getElementById("hero-member-count");
+            if (heroCount) heroCount.textContent = `${TCO_ROSTER_DATABASE.length} OPERATIVES`;
+            window.dispatchEvent(new Event('resize'));
+        });
+
+        function initializeWebGLHero() {
+            const canvas = document.getElementById("hero-canvas");
+            if (!canvas) return;
+            const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            if (!gl) {
+                console.error("WebGL activation context unsupported in this system layer.");
+                return;
+            }
+
+            const vertexShaderSrc = `
+                attribute vec4 position;
+                void main() {
+                    gl_Position = position;
+                }
+            `;
+
+            const fragmentShaderSrc = `
+                precision mediump float;
+                uniform float u_time;
+                uniform vec2 u_resolution;
+                uniform vec2 u_mouse;
+                uniform float u_intensity;
+
+                float hash(vec2 p) {
+                    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+                }
+
+                float noise(vec2 p) {
+                    vec2 i = floor(p);
+                    vec2 f = fract(p);
+                    vec2 u = f * f * (3.0 - 2.0 * f);
+                    return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
+                               mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
+                }
+
+                vec2 cheapFlow(vec2 p, float t) {
+                    float n1 = noise(p + vec2(t * 0.15, t * 0.1));
+                    float n2 = noise(p.yx - vec2(t * 0.1, -t * 0.15));
+                    return vec2(sin(n1 * 6.28), cos(n2 * 6.28)) * 0.35;
+                }
+
+                void main() {
+                    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+                    vec2 st = (uv - 0.5) * 2.0;
+                    st.x *= u_resolution.x / u_resolution.y;
+
+                    float time = u_time * 0.22;
+
+                    vec2 flow = cheapFlow(st * 1.6, time);
+                    vec2 coord = st + flow;
+
+                    float dist = noise(coord * 2.2 + vec2(time * 0.4, -time * 0.3)) * 0.25;
+                    dist += noise(coord * 4.5 - vec2(time * 0.2, time * 0.4)) * 0.12;
+
+                    float streak = sin((st.x + dist) * 11.0 + time * 1.8) * 0.5 + 0.5;
+                    streak = smoothstep(0.18, 0.82, streak);
+
+                    vec3 colorAmber = vec3(1.0, 0.7, 0.05);
+                    vec3 colorRust = vec3(0.82, 0.28, 0.22);
+                    vec3 colorOlive = vec3(0.42, 0.46, 0.24);
+                    vec3 colorMoss = vec3(0.35, 0.42, 0.22);
+                    vec3 colorInk = vec3(0.07, 0.08, 0.05);
+
+                    float grad = 1.0 - uv.y;
+                    vec3 finalColor = mix(colorInk, colorOlive, smoothstep(0.0, 0.42, grad));
+                    finalColor = mix(finalColor, colorRust, smoothstep(0.42, 0.72, grad));
+                    finalColor = mix(finalColor, colorAmber, smoothstep(0.72, 1.0, grad));
+
+                    float colorNoise = noise(coord * 3.2 + time) * 0.45;
+                    finalColor = mix(finalColor, colorMoss, colorNoise * 0.28);
+
+                    float intensity = streak * 0.82 * u_intensity;
+
+                    vec2 mouse = u_mouse / u_resolution.xy;
+                    mouse = (mouse - 0.5) * 2.0;
+                    mouse.x *= u_resolution.x / u_resolution.y;
+                    float mouseDist = length(st - mouse);
+                    float mouseInfluence = smoothstep(0.75, 0.0, mouseDist);
+                    intensity += mouseInfluence * 0.32;
+
+                    vec3 result = finalColor * intensity;
+
+                    vec3 bgColor = vec3(0.01, 0.005, 0.06) + finalColor * 0.022;
+                    result = mix(bgColor, result, smoothstep(0.0, 0.35, intensity));
+
+                    float vignette = uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y);
+                    vignette = clamp(pow(16.0 * vignette, 0.42), 0.0, 1.0);
+                    result *= vignette;
+
+                    float grain = fract(sin(dot(uv * (time + 1.0), vec2(12.9898, 78.233))) * 43758.5453);
+                    result += (grain - 0.5) * 0.045;
+
+                    gl_FragColor = vec4(result, 1.0);
+                }
+            `;
+
+            function loadShader(gl, type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    gl.deleteShader(shader);
+                    return null;
+                }
+                return shader;
+            }
+
+            const vs = loadShader(gl, gl.VERTEX_SHADER, vertexShaderSrc);
+            const fs = loadShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSrc);
+            if (!vs || !fs) {
+                console.error("WebGL Shader compilation failed.");
+                return;
+            }
+
+            const program = gl.createProgram();
+            gl.attachShader(program, vs);
+            gl.attachShader(program, fs);
+            gl.linkProgram(program);
+
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                return;
+            }
+
+            const vertices = new Float32Array([
+                -1.0, -1.0,
+                 1.0, -1.0,
+                -1.0,  1.0,
+                -1.0,  1.0,
+                 1.0, -1.0,
+                 1.0,  1.0,
+            ]);
+
+            const buffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+            const positionLoc = gl.getAttribLocation(program, "position");
+            gl.enableVertexAttribArray(positionLoc);
+            gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+            gl.useProgram(program);
+
+            const uTime = gl.getUniformLocation(program, "u_time");
+            const uResolution = gl.getUniformLocation(program, "u_resolution");
+            const uMouse = gl.getUniformLocation(program, "u_mouse");
+            const uIntensity = gl.getUniformLocation(program, "u_intensity");
+
+            let mouseX = canvas.width / 2;
+            let mouseY = canvas.height / 2;
+
+            window.addEventListener("resize", resizeCanvas);
+            function resizeCanvas() {
+                const dpr = Math.min(window.devicePixelRatio, 1.5);
+                canvas.width = canvas.clientWidth * dpr;
+                canvas.height = canvas.clientHeight * dpr;
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+            resizeCanvas();
+
+            window.addEventListener("mousemove", (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+                mouseY = (rect.height - (e.clientY - rect.top)) * (canvas.height / rect.height);
+                
+                webGlIntensity = 1.15;
+                clearTimeout(intensityDecayTimeout);
+                intensityDecayTimeout = setTimeout(() => {
+                    gsap.to(window, {
+                        customIntensityDecay: 1.0,
+                        duration: 1.5,
+                        onUpdate: () => { webGlIntensity = 1.0; }
+                    });
+                }, 100);
+            });
+
+            function renderEngineLoop(time) {
+                if (canvas.offsetParent !== null) {
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                    gl.uniform1f(uTime, time * 0.001);
+                    gl.uniform2f(uResolution, canvas.width, canvas.height);
+                    gl.uniform2f(uMouse, mouseX, mouseY);
+                    gl.uniform1f(uIntensity, webGlIntensity);
+                    gl.drawArrays(gl.TRIANGLES, 0, 6);
+                }
+                requestAnimationFrame(renderEngineLoop);
+            }
+            requestAnimationFrame(renderEngineLoop);
+        }
+
+        function setup3DNavigationAnimations() {
+            const navLinks = document.querySelectorAll(".nav-large-link");
+            navLinks.forEach(link => {
+                link.addEventListener("mouseenter", () => {
+                    gsap.to(link, {
+                        scale: 1.05,
+                        rotationX: -2,
+                        z: 20,
+                        textShadow: "0 0 20px rgba(255,179,0,0.8), 0 0 30px rgba(255,179,0,0.4)",
+                        duration: 0.6,
+                        transformPerspective: 1000,
+                        ease: "power2.out"
+                    });
+                });
+                link.addEventListener("mouseleave", () => {
+                    gsap.to(link, {
+                        scale: 1,
+                        rotationX: 0,
+                        z: 0,
+                        textShadow: "none",
+                        duration: 0.6,
+                        ease: "power2.out"
+                    });
+                });
+            });
+        }
+
+        function startContinuousKillfeedEngine() {
+            const feedContainer = document.getElementById("killfeed-container");
+            if (!feedContainer) return;
+            if (!LIVE_FEED_OPERATIVES.length) return; // nothing to show if no streamers are configured
+
+            function spawnKillEvent() {
+                if (document.hidden) return;
+                
+                const activePlayer = LIVE_FEED_OPERATIVES[Math.floor(Math.random() * LIVE_FEED_OPERATIVES.length)];
+                const activeWeapon = WEAPONS_CATALOG[Math.floor(Math.random() * WEAPONS_CATALOG.length)];
+                const targetedOpponent = OPPONENT_TARGETS[Math.floor(Math.random() * OPPONENT_TARGETS.length)];
+
+                const feedRow = document.createElement("div");
+                feedRow.className = "killfeed-item flex items-center justify-between border border-zinc-900/40 bg-zinc-950/40 px-4 py-2.5 rounded-lg opacity-0 transform translate-x-4";
+                
+                feedRow.innerHTML = `
+                    <span class="text-cyber-purple font-bold">${activePlayer}</span>
+                    <span class="text-[11px] uppercase tracking-widest px-2.5 py-0.5 border border-cyber-red/20 bg-cyber-red/5 rounded text-cyber-red font-mono font-semibold">[ ${activeWeapon} ]</span>
+                    <span class="text-zinc-500">${targetedOpponent}</span>
+                `;
+
+                feedContainer.appendChild(feedRow);
+                gsap.to(feedRow, { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" });
+
+                const currentRows = feedContainer.querySelectorAll(".killfeed-item");
+                if (currentRows.length > 5) {
+                    const oldestItem = currentRows[0];
+                    oldestItem.classList.add("removing");
+                    setTimeout(() => {
+                        oldestItem.remove();
+                    }, 400);
+                }
+            }
+
+            setInterval(spawnKillEvent, 2200);
+        }
+
+        function classifyDeviceCategory(device) {
+            const d = (device || "").toLowerCase();
+            if (d.includes("controller") || d === "pc") return "pc";
+            if (d.includes("ipad") || d.includes("tab ")) return "tablet";
+            return "phone";
+        }
+
+        function buildRosterCard(operative, idx, accentClass) {
+            const card = document.createElement("div");
+            card.className = `hud-corners ${accentClass} border border-zinc-900 bg-cyber-gray/50 rounded-xl p-5 relative overflow-hidden group hover:border-cyber-purple/60 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-md`;
+            card.setAttribute("data-index", idx);
+
+            card.innerHTML = `
+                <span class="hc-tr"></span><span class="hc-bl"></span>
+                <div class="absolute -right-4 -bottom-4 text-6xl text-zinc-900/40 font-black font-mono select-none group-hover:text-cyber-purple/5 transition-colors">${String(idx + 1).padStart(2, '0')}</div>
+                <div class="space-y-3 relative z-10">
+                    <div class="text-[10px] font-mono ${accentClass} tracking-widest uppercase font-semibold">RANKED OPERATIVE</div>
+                    <h4 class="text-base font-bold text-white tracking-wide truncate group-hover:text-cyber-purple transition-colors">${operative.name}</h4>
+                    <div class="border-t border-zinc-900 pt-3 space-y-1 text-xs font-mono text-zinc-500">
+                        <div>DEVICE: <span class="text-zinc-300 uppercase">${operative.device}</span></div>
+                        <div class="text-[10px] opacity-60">UID: ${operative.uid.substring(0,8)}...</div>
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener("click", () => displayTacticalDossier(idx));
+            return card;
+        }
+
+        function buildInteractiveRoster() {
+            const gridPhone = document.getElementById("roster-grid-phone");
+            const gridPc = document.getElementById("roster-grid-pc");
+            const gridTablet = document.getElementById("roster-grid-tablet");
+            if (!gridPhone || !gridPc || !gridTablet) return;
+
+            gridPhone.innerHTML = "";
+            gridPc.innerHTML = "";
+            gridTablet.innerHTML = "";
+
+            let countPhone = 0, countPc = 0, countTablet = 0;
+
+            TCO_ROSTER_DATABASE.forEach((operative, idx) => {
+                const category = classifyDeviceCategory(operative.device);
+
+                if (category === "pc") {
+                    gridPc.appendChild(buildRosterCard(operative, idx, "text-cyber-blue"));
+                    countPc++;
+                } else if (category === "tablet") {
+                    gridTablet.appendChild(buildRosterCard(operative, idx, "text-cyber-red"));
+                    countTablet++;
+                } else {
+                    gridPhone.appendChild(buildRosterCard(operative, idx, "text-cyber-purple"));
+                    countPhone++;
+                }
+            });
+
+            const countPhoneEl = document.getElementById("roster-count-phone");
+            const countPcEl = document.getElementById("roster-count-pc");
+            const countTabletEl = document.getElementById("roster-count-tablet");
+            if (countPhoneEl) countPhoneEl.textContent = `${countPhone} OPERATIVES`;
+            if (countPcEl) countPcEl.textContent = `${countPc} OPERATIVES`;
+            if (countTabletEl) countTabletEl.textContent = `${countTablet} OPERATIVES`;
+
+            const totalEl = document.getElementById("member-total-count");
+            if (totalEl) totalEl.textContent = String(TCO_ROSTER_DATABASE.length);
+        }
+
+        const STREAM_CARD_TEMPLATES = {
+            terminal: (item, idx) => `
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                   class="hud-corners text-cyber-green group relative block border border-cyber-green/30 bg-black/80 rounded-xl p-6 overflow-hidden hover:border-cyber-green/70 hover:-translate-y-1 hover:shadow-neon-green transition-all duration-300">
+                    <span class="hc-tr"></span><span class="hc-bl"></span>
+                    <div class="stream-scanlines absolute inset-0 opacity-40 pointer-events-none"></div>
+                    <div class="relative z-10 flex items-center gap-2 mb-5">
+                        <span class="relative flex h-2 w-2">
+                            <span class="live-ring absolute inline-flex h-full w-full rounded-full bg-cyber-green"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyber-green"></span>
+                        </span>
+                        <span class="text-[10px] font-mono text-cyber-green tracking-widest uppercase">Terminal Uplink // ${String(idx + 1).padStart(2, '0')}</span>
+                    </div>
+                    <h4 class="relative z-10 text-lg font-black text-white font-orbitron tracking-wide group-hover:text-cyber-green transition-colors">${item.name}</h4>
+                    <p class="relative z-10 text-xs font-mono text-zinc-500 mt-1">${item.handle}</p>
+                    <div class="relative z-10 mt-6 pt-3 border-t border-zinc-900 flex items-center justify-between text-[10px] font-mono text-zinc-600">
+                        <span>SRC: <span class="text-zinc-300">${item.platform}</span></span>
+                        <span class="text-cyber-green group-hover:translate-x-1 transition-transform inline-block">CONNECT →</span>
+                    </div>
+                </a>
+            `,
+            holo: (item, idx) => `
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                   class="hud-corners text-cyber-blue group relative block border border-cyber-blue/30 bg-gradient-to-br from-cyber-blue/10 via-black/80 to-black/90 rounded-xl p-6 overflow-hidden hover:border-cyber-blue/70 hover:-translate-y-1 transition-all duration-300 shadow-lg">
+                    <span class="hc-tr"></span><span class="hc-bl"></span>
+                    <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full border border-cyber-blue/20 group-hover:border-cyber-blue/50 transition-colors"></div>
+                    <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full border border-dashed border-cyber-blue/10 animate-spin" style="animation-duration: 10s;"></div>
+                    <div class="relative z-10 text-[10px] font-mono text-cyber-blue tracking-widest uppercase mb-5">Holo Signal // ${item.platform}</div>
+                    <h4 class="relative z-10 text-lg font-black text-white font-orbitron tracking-wide group-hover:text-cyber-blue transition-colors">${item.name}</h4>
+                    <p class="relative z-10 text-xs font-mono text-zinc-500 mt-1">${item.handle}</p>
+                    <div class="relative z-10 mt-6 pt-3 border-t border-zinc-900 flex items-center justify-between text-[10px] font-mono text-zinc-600">
+                        <span class="text-cyber-blue font-bold">ID // ${String(idx + 1).padStart(2, '0')}</span>
+                        <span class="text-cyber-blue group-hover:translate-x-1 transition-transform inline-block">OPEN CHANNEL →</span>
+                    </div>
+                </a>
+            `,
+            aparat: (item, idx) => `
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                   class="group relative block border border-[#ff8a00]/40 bg-black/85 rounded-xl p-6 overflow-hidden hover:border-[#ff8a00]/80 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(255,138,0,0.25)] transition-all duration-300">
+                    <div class="absolute top-0 right-0 bg-[#ff8a00]/15 text-[#ff8a00] px-3 py-1 text-[9px] font-mono tracking-widest border-b border-l border-zinc-800 font-bold uppercase">Video // Live</div>
+                    <div class="relative z-10 flex items-center gap-3 mt-2 mb-5">
+                        <div class="w-10 h-10 rounded-full bg-[#ff8a00]/10 border border-[#ff8a00]/40 flex items-center justify-center">
+                            <div class="w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[9px] border-l-[#ff8a00] ml-0.5"></div>
+                        </div>
+                        <span class="text-[10px] font-mono text-[#ff8a00] tracking-widest uppercase">Aparat Broadcast</span>
+                    </div>
+                    <h4 class="relative z-10 text-lg font-black text-white font-orbitron tracking-wide group-hover:text-[#ff8a00] transition-colors">${item.name}</h4>
+                    <p class="relative z-10 text-xs font-mono text-zinc-500 mt-1">${item.handle}</p>
+                    <div class="relative z-10 mt-6 pt-3 border-t border-zinc-900 flex items-center justify-between text-[10px] font-mono text-zinc-600">
+                        <span>SRC: <span class="text-zinc-300">${item.platform}</span></span>
+                        <span class="text-[#ff8a00] group-hover:translate-x-1 transition-transform inline-block">WATCH LIVE →</span>
+                    </div>
+                </a>
+            `,
+            broadcast: (item, idx) => `
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                   class="hud-corners text-cyber-purple group relative block border border-cyber-purple/30 bg-cyber-gray/50 rounded-xl p-6 overflow-hidden hover:border-cyber-purple/70 hover:-translate-y-1 hover:shadow-neon-purple transition-all duration-300">
+                    <span class="hc-tr"></span><span class="hc-bl"></span>
+                    <div class="absolute -right-4 -bottom-4 text-6xl text-zinc-900/50 font-black font-mono select-none group-hover:text-cyber-purple/10 transition-colors">${String(idx + 1).padStart(2, '0')}</div>
+                    <div class="relative z-10 text-[10px] font-mono text-cyber-purple tracking-widest uppercase mb-5">// BROADCAST TOWER</div>
+                    <h4 class="relative z-10 text-lg font-black text-white font-orbitron tracking-wide group-hover:text-cyber-purple transition-colors">${item.name}</h4>
+                    <p class="relative z-10 text-xs font-mono text-zinc-500 mt-1">${item.handle}</p>
+                    <div class="relative z-10 mt-6 pt-3 border-t border-zinc-900 flex items-center justify-between text-[10px] font-mono text-zinc-600">
+                        <span>SRC: <span class="text-zinc-300">${item.platform}</span></span>
+                        <span class="text-cyber-purple group-hover:translate-x-1 transition-transform inline-block">TUNE IN →</span>
+                    </div>
+                </a>
+            `,
+            signal: (item, idx) => `
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                   class="hud-corners text-cyber-red group relative block border border-cyber-red/30 bg-black/80 rounded-xl p-6 overflow-hidden hover:border-cyber-red/70 hover:-translate-y-1 hover:shadow-neon-red transition-all duration-300">
+                    <span class="hc-tr"></span><span class="hc-bl"></span>
+                    <div class="relative z-10 flex items-center gap-2 mb-5">
+                        <span class="relative flex h-2 w-2">
+                            <span class="live-ring absolute inline-flex h-full w-full rounded-full bg-cyber-red"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-cyber-red"></span>
+                        </span>
+                        <span class="text-[10px] font-mono text-cyber-red tracking-widest uppercase">Signal Ping // ${item.platform}</span>
+                    </div>
+                    <h4 class="relative z-10 text-lg font-black text-white font-orbitron tracking-wide group-hover:text-cyber-red transition-colors">${item.name}</h4>
+                    <p class="relative z-10 text-xs font-mono text-zinc-500 mt-1">${item.handle}</p>
+                    <div class="relative z-10 mt-6 pt-3 border-t border-zinc-900 flex items-center justify-between text-[10px] font-mono text-zinc-600">
+                        <span class="text-cyber-red font-bold">ID // ${String(idx + 1).padStart(2, '0')}</span>
+                        <span class="text-cyber-red group-hover:translate-x-1 transition-transform inline-block">JOIN →</span>
+                    </div>
+                </a>
+            `
+        };
+
+        function buildStreamGrid() {
+            const grid = document.getElementById("stream-grid");
+            if (!grid) return;
+            grid.innerHTML = "";
+
+            TCO_STREAM_LINKS.forEach((item, idx) => {
+                const templateFn = STREAM_CARD_TEMPLATES[item.template] || STREAM_CARD_TEMPLATES.terminal;
+                const wrapper = document.createElement("div");
+                wrapper.innerHTML = templateFn(item, idx).trim();
+                grid.appendChild(wrapper.firstElementChild);
+            });
+
+            const totalEl = document.getElementById("stream-total-count");
+            if (totalEl) totalEl.textContent = String(TCO_STREAM_LINKS.length);
+        }
+
+
+        const GUN_ACCENT_STYLES = {
+            purple: { badge: "bg-[#ffb300]/10 text-cyber-purple", hover: "hover:border-cyber-purple/40", label: "text-cyber-purple" },
+            red: { badge: "bg-cyber-red/10 text-cyber-red", hover: "hover:border-cyber-red/40", label: "text-cyber-red" },
+            blue: { badge: "bg-cyber-blue/10 text-cyber-blue", hover: "hover:border-cyber-blue/40", label: "text-cyber-blue" }
+        };
+
+        function buildGunCard(weapon) {
+            const style = GUN_ACCENT_STYLES[weapon.accent] || GUN_ACCENT_STYLES.purple;
+
+            const partsHtml = weapon.parts.map(part => {
+                const valueClass = part.highlight ? `${style.label} font-bold` : (part.muted ? "text-zinc-400" : "text-white font-bold");
+                return `<div class="flex justify-between"><span class="text-zinc-500">${part.label}:</span> <span class="${valueClass}">${part.value}</span></div>`;
+            }).join("");
+
+            return `
+                <div class="hud-corners ${style.label} border border-zinc-800 bg-cyber-gray/30 rounded-2xl p-6 relative overflow-hidden group ${style.hover} transition-all duration-300 flex flex-col justify-between">
+                    <span class="hc-tr"></span><span class="hc-bl"></span>
+                    <div class="absolute top-0 right-0 ${style.badge} px-4 py-1 text-[10px] font-mono tracking-widest border-b border-l border-zinc-800 font-bold">${weapon.badge}</div>
+                    <div>
+                        <span class="font-mono text-xs text-zinc-500 block">${weapon.configLabel}</span>
+                        <h4 class="text-2xl font-black text-white tracking-wide mt-1">${weapon.name}</h4>
+
+                        <div class="mt-6 space-y-2 border-t border-b border-zinc-900 py-4 font-mono text-xs">
+                            ${partsHtml}
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-black/60 border border-zinc-900 rounded p-3 text-[11px] font-mono text-zinc-400 leading-relaxed">
+                        <span class="${style.label} block font-bold mb-1">// CODM GUNSMITH EVALUATION</span>
+                        ${weapon.evaluation}
+                    </div>
+                </div>
+            `;
+        }
+
+        function buildGunGrid() {
+            const grid = document.getElementById("gun-grid");
+            if (!grid) return;
+            grid.innerHTML = "";
+
+            TCO_GUN_CATALOG.forEach((weapon) => {
+                const wrapper = document.createElement("div");
+                wrapper.innerHTML = buildGunCard(weapon).trim();
+                grid.appendChild(wrapper.firstElementChild);
+            });
+
+            const totalEl = document.getElementById("gun-total-count");
+            if (totalEl) totalEl.textContent = String(TCO_GUN_CATALOG.length);
+        }
+
+        function displayTacticalDossier(index) {
+            const operative = TCO_ROSTER_DATABASE[index];
+            const contentZone = document.getElementById("dossier-content");
+            const modalFrame = document.getElementById("dossier-modal");
+            if (!contentZone || !modalFrame) return;
+
+            contentZone.innerHTML = `
+                <div class="flex flex-col space-y-1">
+                    <span class="text-xs font-mono text-cyber-purple tracking-widest">// OFFICIAL FIELDFILE DETAILED</span>
+                    <h3 class="text-2xl font-black text-white uppercase tracking-wide">${operative.name}</h3>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 bg-black/40 p-4 border border-zinc-900 rounded-xl font-mono text-xs text-zinc-400">
+                    <div><span class="text-zinc-600 block">UID MATRIX ASSIGNMENT</span><span class="text-white select-all">${operative.uid}</span></div>
+                    <div><span class="text-zinc-600 block">HARDWARE PROVISION</span><span class="text-white uppercase">${operative.device}</span></div>
+                    <div><span class="text-zinc-600 block">TELEGRAM CHANNEL</span><span class="text-cyber-blue">${operative.telegram}</span></div>
+                    <div><span class="text-zinc-600 block">REGIME ASSIGNMENT</span><span class="text-cyber-purple">TCO CLAN x TCO . Family</span></div>
+                </div>
+            `;
+
+            modalFrame.classList.remove("hidden");
+            setTimeout(() => {
+                modalFrame.classList.add("opacity-100");
+                if (modalFrame.firstElementChild) {
+                    modalFrame.firstElementChild.classList.remove("scale-95");
+                }
+                
+                const targetBars = contentZone.querySelectorAll(".dossier-progress-bar");
+                targetBars.forEach(bar => {
+                    bar.style.width = bar.getAttribute("data-width");
+                });
+            }, 50);
+        }
+
+        function setupModalInteractions() {
+            const modalFrame = document.getElementById("dossier-modal");
+            const closeBtn = document.getElementById("modal-close");
+            if (!modalFrame || !closeBtn) return;
+
+            function dismissModal() {
+                modalFrame.classList.remove("opacity-100");
+                if (modalFrame.firstElementChild) {
+                    modalFrame.firstElementChild.classList.add("scale-95");
+                }
+                setTimeout(() => {
+                    modalFrame.classList.add("hidden");
+                }, 300);
+            }
+
+            closeBtn.addEventListener("click", dismissModal);
+            modalFrame.addEventListener("click", (e) => {
+                if (e.target === modalFrame) dismissModal();
+            });
+        }
+
+        function setDockActive(active) {
+            const dockStyles = {
+                home: { btn: "dock-home-btn", indicator: "dock-home-indicator", color: "text-cyber-purple" },
+                member: { btn: "dock-member-btn", indicator: "dock-member-indicator", color: "text-cyber-blue" },
+                gun: { btn: "dock-gun-btn", indicator: "dock-gun-indicator", color: "text-cyber-red" },
+                stream: { btn: "dock-stream-btn", indicator: "dock-stream-indicator", color: "text-cyber-green" }
+            };
+
+            Object.keys(dockStyles).forEach((key) => {
+                const cfg = dockStyles[key];
+                const btn = document.getElementById(cfg.btn);
+                const indicator = document.getElementById(cfg.indicator);
+                if (!btn || !indicator) return;
+
+                if (key === active) {
+                    btn.classList.add(cfg.color);
+                    btn.classList.remove("text-zinc-500");
+                    indicator.classList.remove("hidden");
+                } else {
+                    btn.classList.remove(cfg.color);
+                    btn.classList.add("text-zinc-500");
+                    indicator.classList.add("hidden");
+                }
+            });
+        }
+
+        function getAllViews() {
+            return {
+                mainContent: document.getElementById("main-content"),
+                homeView: document.getElementById("home-view"),
+                gunView: document.getElementById("gun-view"),
+                memberView: document.getElementById("member-view"),
+                streamView: document.getElementById("stream-view")
+            };
+        }
+
+        function switchToHome() {
+            const { mainContent, homeView, gunView, memberView, streamView } = getAllViews();
+            if (!homeView || !gunView) return;
+
+            setDockActive("home");
+
+            const fadeOutTargets = [gunView, memberView, streamView].filter(Boolean);
+
+            gsap.to(fadeOutTargets, { opacity: 0, duration: 0.4, onComplete: () => {
+                gunView.classList.add("hidden");
+                if (memberView) memberView.classList.add("hidden");
+                if (streamView) streamView.classList.add("hidden");
+
+                if (mainContent) {
+                    mainContent.classList.remove("hidden");
+                    mainContent.style.opacity = "1";
+                }
+
+                homeView.classList.remove("hidden");
+                gsap.fromTo(homeView, { opacity: 0 }, { opacity: 1, duration: 0.5 });
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.dispatchEvent(new Event('resize'));
+            }});
+        }
+
+        function switchToMember() {
+            const { mainContent, homeView, gunView, memberView, streamView } = getAllViews();
+            if (!memberView) return;
+
+            setDockActive("member");
+
+            const fadeOutTargets = [homeView, gunView, streamView].filter(Boolean);
+
+            gsap.to(fadeOutTargets, { opacity: 0, duration: 0.4, onComplete: () => {
+                if (mainContent) mainContent.classList.add("hidden");
+                if (gunView) gunView.classList.add("hidden");
+                if (streamView) streamView.classList.add("hidden");
+
+                memberView.classList.remove("hidden");
+                buildInteractiveRoster();
+
+                gsap.fromTo(memberView, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.dispatchEvent(new Event('resize'));
+            }});
+        }
+
+        function switchToGun() {
+            const { mainContent, homeView, gunView, memberView, streamView } = getAllViews();
+            if (!homeView || !gunView) return;
+
+            setDockActive("gun");
+
+            const fadeOutTargets = [homeView, memberView, streamView].filter(Boolean);
+
+            gsap.to(fadeOutTargets, {
+                opacity: 0, duration: 0.4, onComplete: () => {
+                    if (mainContent) mainContent.classList.add("hidden");
+                    if (memberView) memberView.classList.add("hidden");
+                    if (streamView) streamView.classList.add("hidden");
+
+                    gunView.classList.remove("hidden");
+                    buildGunGrid();
+
+                    gsap.fromTo(gunView, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" });
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.dispatchEvent(new Event('resize'));
+                }
+            });
+        }
+
+        function switchToStream() {
+            const { mainContent, homeView, gunView, memberView, streamView } = getAllViews();
+            if (!streamView) return;
+
+            setDockActive("stream");
+
+            const fadeOutTargets = [homeView, gunView, memberView].filter(Boolean);
+
+            gsap.to(fadeOutTargets, {
+                opacity: 0, duration: 0.4, onComplete: () => {
+                    if (mainContent) mainContent.classList.add("hidden");
+                    if (gunView) gunView.classList.add("hidden");
+                    if (memberView) memberView.classList.add("hidden");
+
+                    streamView.classList.remove("hidden");
+                    buildStreamGrid();
+
+                    gsap.fromTo(streamView, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" });
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.dispatchEvent(new Event('resize'));
+                }
+            });
+        }
+    </script>
+</body>
+</html>
